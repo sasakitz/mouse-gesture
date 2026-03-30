@@ -14,7 +14,7 @@
         <img src="../icons/icon48.png" alt="icon" class="sidebar-logo">
         <div>
           <div class="sidebar-title">Mouse Gesture</div>
-          <div class="sidebar-version">v1.0.0</div>
+          <div class="sidebar-version">v1.1.0</div>
         </div>
       </div>
       <nav class="sidebar-nav">
@@ -30,6 +30,13 @@
             <path d="M20.188 10.934c.2-.638.312-1.31.312-2.01C20.5 5.19 18 2.5 14.872 2.5c-1.2 0-2.31.376-3.22 1.01A5.514 5.514 0 0 0 8.5 3c-3.038 0-5.5 2.462-5.5 5.5 0 .69.113 1.35.312 1.965C2.488 11.292 2 12.59 2 14c0 3.314 2.686 6 6 6a5.97 5.97 0 0 0 4-1.528A5.97 5.97 0 0 0 16 20c3.314 0 6-2.686 6-6 0-1.41-.488-2.708-1.312-3.734"/>
           </svg>
           外観
+        </button>
+        <button class="nav-item" data-section="blacklist">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+          </svg>
+          ブラックリスト
         </button>
       </nav>
     </aside>
@@ -114,6 +121,35 @@
               <span id="min-distance-value" class="range-value">30px</span>
             </div>
           </div>
+
+          <div class="field-row">
+            <label class="field-label" for="context-menu-key">通常メニューキー</label>
+            <div class="field-control">
+              <select id="context-menu-key" class="action-select">
+                <option value="shiftKey">Shift + 右クリック</option>
+                <option value="ctrlKey">Ctrl + 右クリック</option>
+                <option value="altKey">Alt + 右クリック</option>
+                <option value="metaKey">Super/Cmd + 右クリック</option>
+                <option value="none">無効（常にジェスチャー優先）</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Blacklist Section ────────────────────── -->
+      <section id="section-blacklist" class="section">
+        <div class="section-header">
+          <h2>ブラックリスト</h2>
+          <p class="section-desc">指定したサイトではジェスチャー機能を無効にします。ドメイン（例: example.com）またはURLプレフィックス（例: https://example.com/app）を登録できます。</p>
+        </div>
+
+        <div class="appearance-card">
+          <div class="blacklist-add-row">
+            <input type="text" id="blacklist-input" class="blacklist-input" placeholder="例: example.com">
+            <button id="blacklist-add-btn" class="btn btn-primary">追加</button>
+          </div>
+          <div id="blacklist-list" class="blacklist-list"></div>
         </div>
       </section>
 

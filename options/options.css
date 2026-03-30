@@ -367,6 +367,64 @@ input[type="range"] {
   color: var(--text-muted);
 }
 
+/* ── Blacklist ───────────────────────────────── */
+.blacklist-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.blacklist-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--surface3);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: monospace;
+}
+
+.blacklist-input:focus {
+  border-color: var(--accent);
+}
+
+.blacklist-input::placeholder {
+  color: var(--text-muted);
+}
+
+.blacklist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.blacklist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.blacklist-entry {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.blacklist-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 20px 0;
+}
+
 /* ── Toast ───────────────────────────────────── */
 .toast {
   position: fixed;

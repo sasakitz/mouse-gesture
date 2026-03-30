@@ -4,6 +4,8 @@ const DEFAULT_CONFIG = {
   trailColor: '#3b82f6',
   trailOpacity: 0.75,
   trailWidth: 3,
+  blacklist: [],
+  contextMenuKey: 'shiftKey',
   gestures: {
     'L':  { action: 'back',         label: '戻る' },
     'R':  { action: 'forward',      label: '進む' },

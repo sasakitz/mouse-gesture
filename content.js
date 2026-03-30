@@ -75,9 +75,28 @@ if (window.__mouseGestureLoaded) {
 
     // ─── Event Handlers ───────────────────────────────────────────────────────
 
+    function isBlacklisted() {
+      const blacklist = config?.blacklist ?? [];
+      if (blacklist.length === 0) return false;
+      const hostname = window.location.hostname;
+      const href = window.location.href;
+      return blacklist.some(entry => {
+        entry = entry.trim();
+        if (!entry) return false;
+        if (hostname === entry || hostname.endsWith('.' + entry)) return true;
+        if (href.startsWith(entry)) return true;
+        return false;
+      });
+    }
+
     function onMouseDown(e) {
       if (e.button !== 2) return;
       if (!config?.enabled) return;
+      if (isBlacklisted()) return;
+
+      // If the context-menu modifier key is held, skip gesture and allow normal menu
+      const menuKey = config?.contextMenuKey ?? 'shiftKey';
+      if (menuKey !== 'none' && e[menuKey]) return;
 
       // Set RECORDING immediately so contextmenu check works on Linux
       state = 'RECORDING';
@@ -146,7 +165,7 @@ if (window.__mouseGestureLoaded) {
 
     function onContextMenu(e) {
       if (state === 'RECORDING') {
-        // Linux: contextmenu fires on mousedown before any drag
+        // Linux: contextmenu fires on mousedown before any drag — always suppress
         e.preventDefault();
         e.stopPropagation();
         return;

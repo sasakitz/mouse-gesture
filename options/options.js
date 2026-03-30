@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderGestureList();
   setupAppearanceControls();
   setupCustomRecorder();
+  setupBlacklist();
 });
 
 async function loadConfig() {
@@ -41,6 +42,8 @@ function getDefaultConfig() {
     trailColor: '#3b82f6',
     trailOpacity: 0.75,
     trailWidth: 3,
+    blacklist: [],
+    contextMenuKey: 'shiftKey',
     gestures: {
       'L':  { action: 'back',         label: '戻る' },
       'R':  { action: 'forward',      label: '進む' },
@@ -214,6 +217,13 @@ function setupAppearanceControls() {
   minDistInput.addEventListener('input', () => {
     minDistValue.textContent = minDistInput.value + 'px';
     currentConfig.minDistance = parseInt(minDistInput.value, 10);
+    debouncedSave();
+  });
+
+  const contextMenuKeySelect = document.getElementById('context-menu-key');
+  contextMenuKeySelect.value = currentConfig.contextMenuKey ?? 'shiftKey';
+  contextMenuKeySelect.addEventListener('change', () => {
+    currentConfig.contextMenuKey = contextMenuKeySelect.value;
     debouncedSave();
   });
 }
@@ -393,6 +403,73 @@ function quantizeDirection(dx, dy) {
   if (angle >= 45  && angle < 135)  return 'D';
   if (angle >= 135 || angle < -135) return 'L';
   return 'U';
+}
+
+// ─── Blacklist ────────────────────────────────────────────────────────────────
+
+function setupBlacklist() {
+  const input = document.getElementById('blacklist-input');
+  const addBtn = document.getElementById('blacklist-add-btn');
+  const list = document.getElementById('blacklist-list');
+
+  renderBlacklist();
+
+  addBtn.addEventListener('click', async () => {
+    const value = input.value.trim();
+    if (!value) return;
+    if (!currentConfig.blacklist) currentConfig.blacklist = [];
+    if (currentConfig.blacklist.includes(value)) {
+      showToast('既に登録されています');
+      return;
+    }
+    currentConfig.blacklist.push(value);
+    await saveConfig();
+    input.value = '';
+    renderBlacklist();
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addBtn.click();
+  });
+
+  function renderBlacklist() {
+    list.innerHTML = '';
+    const entries = currentConfig.blacklist ?? [];
+    if (entries.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'blacklist-empty';
+      empty.textContent = '登録されているサイトはありません';
+      list.appendChild(empty);
+      return;
+    }
+    for (const entry of entries) {
+      const row = document.createElement('div');
+      row.className = 'blacklist-row';
+
+      const label = document.createElement('span');
+      label.className = 'blacklist-entry';
+      label.textContent = entry;
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.title = '削除';
+      delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4h6v2"/>
+      </svg>`;
+      delBtn.addEventListener('click', async () => {
+        currentConfig.blacklist = currentConfig.blacklist.filter(e => e !== entry);
+        await saveConfig();
+        renderBlacklist();
+      });
+
+      row.appendChild(label);
+      row.appendChild(delBtn);
+      list.appendChild(row);
+    }
+  }
 }
 
 // ─── Toast ───────────────────────────────────────────────────────────────────
