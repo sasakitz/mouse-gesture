@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mouse Gesture - 設定</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="../icons/icon48.png" alt="icon" class="sidebar-logo">
+        <div>
+          <div class="sidebar-title">Mouse Gesture</div>
+          <div class="sidebar-version">v1.0.0</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="gestures">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/>
+          </svg>
+          ジェスチャー
+        </button>
+        <button class="nav-item" data-section="appearance">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M20.188 10.934c.2-.638.312-1.31.312-2.01C20.5 5.19 18 2.5 14.872 2.5c-1.2 0-2.31.376-3.22 1.01A5.514 5.514 0 0 0 8.5 3c-3.038 0-5.5 2.462-5.5 5.5 0 .69.113 1.35.312 1.965C2.488 11.292 2 12.59 2 14c0 3.314 2.686 6 6 6a5.97 5.97 0 0 0 4-1.528A5.97 5.97 0 0 0 16 20c3.314 0 6-2.686 6-6 0-1.41-.488-2.708-1.312-3.734"/>
+          </svg>
+          外観
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+
+      <!-- ── Gestures Section ──────────────────────── -->
+      <section id="section-gestures" class="section active">
+        <div class="section-header">
+          <h2>ジェスチャー設定</h2>
+          <p class="section-desc">右クリックドラッグで実行するアクションを設定します。</p>
+        </div>
+
+        <div id="gesture-list" class="gesture-list">
+          <!-- Rows rendered by JS -->
+        </div>
+
+        <!-- Add custom gesture -->
+        <div class="add-gesture-card">
+          <h3>カスタムジェスチャーを追加</h3>
+          <p class="hint">下のキャンバスで右クリックドラッグしてジェスチャーを描いてください。</p>
+          <div class="recorder-area">
+            <canvas id="recorder-canvas" width="220" height="180"></canvas>
+            <div class="recorder-info">
+              <div class="recorder-sequence" id="recorder-sequence">ジェスチャーを描いてください</div>
+              <div class="recorder-preview" id="recorder-preview"></div>
+              <div class="recorder-controls">
+                <select id="recorder-action" class="action-select">
+                  <option value="">アクションを選択</option>
+                  <option value="back">戻る</option>
+                  <option value="forward">進む</option>
+                  <option value="reload">リロード</option>
+                  <option value="closeTab">タブを閉じる</option>
+                  <option value="scrollTop">最上部へスクロール</option>
+                  <option value="scrollBottom">最下部へスクロール</option>
+                </select>
+                <button id="add-gesture-btn" class="btn btn-primary" disabled>追加</button>
+                <button id="clear-recorder-btn" class="btn btn-secondary">クリア</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Appearance Section ────────────────────── -->
+      <section id="section-appearance" class="section">
+        <div class="section-header">
+          <h2>外観設定</h2>
+          <p class="section-desc">ジェスチャーの軌跡の見た目を設定します。</p>
+        </div>
+
+        <div class="appearance-card">
+          <div class="field-row">
+            <label class="field-label" for="trail-color">軌跡の色</label>
+            <div class="field-control color-control">
+              <input type="color" id="trail-color" value="#3b82f6">
+              <span id="trail-color-value" class="color-value">#3b82f6</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label class="field-label" for="trail-opacity">軌跡の透明度</label>
+            <div class="field-control">
+              <input type="range" id="trail-opacity" min="0.1" max="1.0" step="0.05" value="0.75">
+              <span id="trail-opacity-value" class="range-value">75%</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label class="field-label" for="trail-width">軌跡の太さ</label>
+            <div class="field-control">
+              <input type="range" id="trail-width" min="1" max="10" step="1" value="3">
+              <span id="trail-width-value" class="range-value">3px</span>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <label class="field-label" for="min-distance">最小ドラッグ距離</label>
+            <div class="field-control">
+              <input type="range" id="min-distance" min="10" max="100" step="5" value="30">
+              <span id="min-distance-value" class="range-value">30px</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="options.js"></script>
+</body>
+</html>
