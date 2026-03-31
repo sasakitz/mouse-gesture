@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupAppearanceControls();
   setupCustomRecorder();
   setupBlacklist();
+  setupReverseList();
 });
 
 async function loadConfig() {
@@ -43,6 +44,7 @@ function getDefaultConfig() {
     trailOpacity: 0.75,
     trailWidth: 3,
     blacklist: [],
+    reverseList: [],
     contextMenuKey: 'shiftKey',
     gestures: {
       'L':  { action: 'back',         label: '戻る' },
@@ -463,6 +465,73 @@ function setupBlacklist() {
         currentConfig.blacklist = currentConfig.blacklist.filter(e => e !== entry);
         await saveConfig();
         renderBlacklist();
+      });
+
+      row.appendChild(label);
+      row.appendChild(delBtn);
+      list.appendChild(row);
+    }
+  }
+}
+
+// ─── Reverse List ────────────────────────────────────────────────────────────
+
+function setupReverseList() {
+  const input = document.getElementById('reverselist-input');
+  const addBtn = document.getElementById('reverselist-add-btn');
+  const list = document.getElementById('reverselist-list');
+
+  renderReverseList();
+
+  addBtn.addEventListener('click', async () => {
+    const value = input.value.trim();
+    if (!value) return;
+    if (!currentConfig.reverseList) currentConfig.reverseList = [];
+    if (currentConfig.reverseList.includes(value)) {
+      showToast('既に登録されています');
+      return;
+    }
+    currentConfig.reverseList.push(value);
+    await saveConfig();
+    input.value = '';
+    renderReverseList();
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addBtn.click();
+  });
+
+  function renderReverseList() {
+    list.innerHTML = '';
+    const entries = currentConfig.reverseList ?? [];
+    if (entries.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'blacklist-empty';
+      empty.textContent = '登録されているサイトはありません';
+      list.appendChild(empty);
+      return;
+    }
+    for (const entry of entries) {
+      const row = document.createElement('div');
+      row.className = 'blacklist-row';
+
+      const label = document.createElement('span');
+      label.className = 'blacklist-entry';
+      label.textContent = entry;
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.title = '削除';
+      delBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4h6v2"/>
+      </svg>`;
+      delBtn.addEventListener('click', async () => {
+        currentConfig.reverseList = currentConfig.reverseList.filter(e => e !== entry);
+        await saveConfig();
+        renderReverseList();
       });
 
       row.appendChild(label);

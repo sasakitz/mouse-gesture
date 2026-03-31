@@ -14,7 +14,7 @@
         <img src="../icons/icon48.png" alt="icon" class="sidebar-logo">
         <div>
           <div class="sidebar-title">Mouse Gesture</div>
-          <div class="sidebar-version">v1.1.0</div>
+          <div class="sidebar-version">v1.1.1</div>
         </div>
       </div>
       <nav class="sidebar-nav">
@@ -37,6 +37,12 @@
             <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
           </svg>
           ブラックリスト
+        </button>
+        <button class="nav-item" data-section="reverselist">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+          </svg>
+          修飾キーモード
         </button>
       </nav>
     </aside>
@@ -150,6 +156,22 @@
             <button id="blacklist-add-btn" class="btn btn-primary">追加</button>
           </div>
           <div id="blacklist-list" class="blacklist-list"></div>
+        </div>
+      </section>
+
+      <!-- ── Reverse List Section ─────────────────── -->
+      <section id="section-reverselist" class="section">
+        <div class="section-header">
+          <h2>修飾キーモード</h2>
+          <p class="section-desc">右クリックに独自機能を持つサイトを登録します。登録サイトでは通常の右クリックはサイト本来の動作になり、「通常メニューキー」を押しながら右クリックドラッグしたときのみジェスチャーが発動します。</p>
+        </div>
+
+        <div class="appearance-card">
+          <div class="blacklist-add-row">
+            <input type="text" id="reverselist-input" class="blacklist-input" placeholder="例: example.com">
+            <button id="reverselist-add-btn" class="btn btn-primary">追加</button>
+          </div>
+          <div id="reverselist-list" class="blacklist-list"></div>
         </div>
       </section>
 

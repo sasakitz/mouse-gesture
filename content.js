@@ -32,6 +32,10 @@ if (window.__mouseGestureLoaded) {
     let fadeAlpha = 1.0;
     let isFading = false;
 
+    // Auto-detection state
+    const sessionReverseHosts = new Set(); // hosts detected as having custom right-click this session
+    const probedHosts = new Set();         // hosts already probed (Linux: avoid repeated probe)
+
     // ─── Initialization ───────────────────────────────────────────────────────
 
     async function init() {
@@ -47,6 +51,7 @@ if (window.__mouseGestureLoaded) {
       // Capture phase listeners for maximum control
       document.addEventListener('mousedown', onMouseDown, true);
       document.addEventListener('contextmenu', onContextMenu, true);
+      document.addEventListener('contextmenu', onContextMenuBubble, false);
     }
 
     async function loadConfig() {
@@ -75,12 +80,11 @@ if (window.__mouseGestureLoaded) {
 
     // ─── Event Handlers ───────────────────────────────────────────────────────
 
-    function isBlacklisted() {
-      const blacklist = config?.blacklist ?? [];
-      if (blacklist.length === 0) return false;
+    function matchesSiteList(list) {
+      if (!list || list.length === 0) return false;
       const hostname = window.location.hostname;
       const href = window.location.href;
-      return blacklist.some(entry => {
+      return list.some(entry => {
         entry = entry.trim();
         if (!entry) return false;
         if (hostname === entry || hostname.endsWith('.' + entry)) return true;
@@ -89,14 +93,32 @@ if (window.__mouseGestureLoaded) {
       });
     }
 
+    function isBlacklisted() {
+      return matchesSiteList(config?.blacklist ?? []);
+    }
+
+    function isReverseListed() {
+      return matchesSiteList(config?.reverseList ?? []);
+    }
+
+    function isReverseMode() {
+      return isReverseListed() || sessionReverseHosts.has(window.location.hostname);
+    }
+
     function onMouseDown(e) {
       if (e.button !== 2) return;
       if (!config?.enabled) return;
       if (isBlacklisted()) return;
 
-      // If the context-menu modifier key is held, skip gesture and allow normal menu
       const menuKey = config?.contextMenuKey ?? 'shiftKey';
-      if (menuKey !== 'none' && e[menuKey]) return;
+
+      if (isReverseMode()) {
+        // Reverse mode: modifier key required to activate gesture
+        if (menuKey === 'none' || !e[menuKey]) return; // allow site's context menu
+      } else {
+        // Normal mode: modifier key skips gesture and shows context menu
+        if (menuKey !== 'none' && e[menuKey]) return;
+      }
 
       // Set RECORDING immediately so contextmenu check works on Linux
       state = 'RECORDING';
@@ -165,7 +187,17 @@ if (window.__mouseGestureLoaded) {
 
     function onContextMenu(e) {
       if (state === 'RECORDING') {
-        // Linux: contextmenu fires on mousedown before any drag — always suppress
+        // Linux: contextmenu fires on mousedown before any drag.
+        // Auto-detect: let through once for unknown sites (gestureDistance===0 means no drag yet).
+        const hostname = window.location.hostname;
+        if (gestureDistance === 0 && !probedHosts.has(hostname) && !isReverseMode()) {
+          probedHosts.add(hostname);
+          document.removeEventListener('mousemove', onMouseMove, true);
+          document.removeEventListener('mouseup', onMouseUp, true);
+          removeCanvas();
+          state = 'IDLE';
+          return; // Pass through to page; bubble handler will detect defaultPrevented
+        }
         e.preventDefault();
         e.stopPropagation();
         return;
@@ -174,6 +206,15 @@ if (window.__mouseGestureLoaded) {
         e.preventDefault();
         e.stopPropagation();
         suppressNextContextMenu = false;
+      }
+    }
+
+    function onContextMenuBubble(e) {
+      // Fires after page handlers. If page called preventDefault (and we didn't), it has custom right-click.
+      if (!e.defaultPrevented) return;
+      const hostname = window.location.hostname;
+      if (!isReverseListed() && !sessionReverseHosts.has(hostname)) {
+        sessionReverseHosts.add(hostname);
       }
     }
 
