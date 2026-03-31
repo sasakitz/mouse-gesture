@@ -192,11 +192,7 @@ if (window.__mouseGestureLoaded) {
         const hostname = window.location.hostname;
         if (gestureDistance === 0 && !probedHosts.has(hostname) && !isReverseMode()) {
           probedHosts.add(hostname);
-          document.removeEventListener('mousemove', onMouseMove, true);
-          document.removeEventListener('mouseup', onMouseUp, true);
-          removeCanvas();
-          state = 'IDLE';
-          return; // Pass through to page; bubble handler will detect defaultPrevented
+          return; // Pass through to page; bubble handler will detect defaultPrevented. Keep recording.
         }
         e.preventDefault();
         e.stopPropagation();
