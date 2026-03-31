@@ -34,7 +34,6 @@ if (window.__mouseGestureLoaded) {
 
     // Auto-detection state
     const sessionReverseHosts = new Set(); // hosts detected as having custom right-click this session
-    const probedHosts = new Set();         // hosts already probed (Linux: avoid repeated probe)
 
     // ─── Initialization ───────────────────────────────────────────────────────
 
@@ -187,13 +186,9 @@ if (window.__mouseGestureLoaded) {
 
     function onContextMenu(e) {
       if (state === 'RECORDING') {
-        // Linux: contextmenu fires on mousedown before any drag.
-        // Auto-detect: let through once for unknown sites (gestureDistance===0 means no drag yet).
-        const hostname = window.location.hostname;
-        if (gestureDistance === 0 && !probedHosts.has(hostname) && !isReverseMode()) {
-          probedHosts.add(hostname);
-          return; // Pass through to page; bubble handler will detect defaultPrevented. Keep recording.
-        }
+        // Always suppress contextmenu during gesture recording.
+        // On Linux, contextmenu fires on mousedown; letting it through would open the native menu
+        // and swallow subsequent mousemove/mouseup events, preventing gesture completion.
         e.preventDefault();
         e.stopPropagation();
         return;
