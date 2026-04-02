@@ -1,0 +1,116 @@
+<svg width="440" height="280" viewBox="0 0 440 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0e1a"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="trailGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="textGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="440" height="280" fill="url(#bg)"/>
+
+  <!-- Subtle grid dots -->
+  <g opacity="0.12">
+    <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="14" cy="14" r="1.5" fill="#7c7bff"/>
+    </pattern>
+    <rect width="440" height="280" fill="url(#dots)"/>
+  </g>
+
+  <!-- Decorative arc (large faint circle) -->
+  <circle cx="380" cy="50" r="160" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.08"/>
+  <circle cx="380" cy="50" r="120" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.06"/>
+
+  <!-- ── Gesture Trail (center-left region) ── -->
+  <g filter="url(#glow2)" opacity="0.95">
+    <!-- Trail: starts top-right, sweeps left, then down — like a back gesture -->
+    <polyline
+      points="310,80 280,78 248,80 216,86 186,96 162,110 145,128 138,148 140,168 148,184 160,196"
+      stroke="url(#trailGrad)"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+    <!-- Start dot -->
+    <circle cx="310" cy="80" r="6" fill="#3b82f6" opacity="0.6"/>
+    <!-- End dot / cursor -->
+    <circle cx="160" cy="196" r="5" fill="white" opacity="0.9"/>
+    <circle cx="160" cy="196" r="9" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+  </g>
+
+  <!-- Second faint trail (depth effect) -->
+  <g opacity="0.25">
+    <polyline
+      points="330,95 298,94 264,98 232,106 204,118 182,133 168,150 164,168"
+      stroke="#3b82f6"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+  </g>
+
+  <!-- ── Extension icon (large, centered-right) ── -->
+  <g transform="translate(290, 90)">
+    <rect width="88" height="88" rx="20" fill="#312e81" opacity="0.9"/>
+    <!-- Trail shape inside icon -->
+    <path d="M22,18 L22,46 L62,46" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Arrowhead -->
+    <path d="M50,34 L62,46 L50,58" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Start dot -->
+    <circle cx="22" cy="18" r="5" fill="rgba(255,255,255,0.75)"/>
+  </g>
+
+  <!-- ── Text ── -->
+  <!-- Title -->
+  <text
+    x="220" y="216"
+    font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,sans-serif"
+    font-size="30" font-weight="800" letter-spacing="-0.5"
+    fill="white" text-anchor="middle"
+    filter="url(#textGlow)"
+  >Mouse Gesture</text>
+
+  <!-- Tagline -->
+  <text
+    x="220" y="244"
+    font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
+    font-size="14" fill="rgba(255,255,255,0.65)" text-anchor="middle"
+  >右クリックドラッグで素早くブラウザ操作</text>
+
+  <!-- Feature pills -->
+  <g transform="translate(68, 260)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="72" height="22" rx="11" fill="#1e3a8a" opacity="0.8"/>
+    <text x="36" y="15" font-family="sans-serif" font-size="11" fill="#93c5fd" text-anchor="middle">戻る / 進む</text>
+    <!-- Pill 2 -->
+    <rect x="80" y="0" width="72" height="22" rx="11" fill="#1e3a8a" opacity="0.8"/>
+    <text x="116" y="15" font-family="sans-serif" font-size="11" fill="#93c5fd" text-anchor="middle">タブ操作</text>
+    <!-- Pill 3 -->
+    <rect x="160" y="0" width="80" height="22" rx="11" fill="#1e3a8a" opacity="0.8"/>
+    <text x="200" y="15" font-family="sans-serif" font-size="11" fill="#93c5fd" text-anchor="middle">カスタマイズ</text>
+    <!-- Pill 4 -->
+    <rect x="248" y="0" width="72" height="22" rx="11" fill="#1e3a8a" opacity="0.8"/>
+    <text x="284" y="15" font-family="sans-serif" font-size="11" fill="#93c5fd" text-anchor="middle">無料・無広告</text>
+  </g>
+</svg>
