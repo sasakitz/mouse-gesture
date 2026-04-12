@@ -127,6 +127,10 @@ if (window.__mouseGestureLoaded) {
       gestureDistance = 0;
       suppressNextContextMenu = false;
 
+      // Disable pointer events on iframes so mousemove events are not swallowed
+      // by embedded frames (e.g. embedded X/Twitter posts) during gesture recording
+      disableIframePointerEvents();
+
       document.addEventListener('mousemove', onMouseMove, true);
       document.addEventListener('mouseup', onMouseUp, true);
     }
@@ -165,6 +169,8 @@ if (window.__mouseGestureLoaded) {
       document.removeEventListener('mouseup', onMouseUp, true);
 
       const minDist = config?.minDistance ?? 30;
+
+      restoreIframePointerEvents();
 
       if (state === 'RECORDING' && gestureDistance > minDist && directions.length > 0) {
         // Suppress contextmenu that fires after mouseup on non-Linux platforms
@@ -207,6 +213,22 @@ if (window.__mouseGestureLoaded) {
       if (!isReverseListed() && !sessionReverseHosts.has(hostname)) {
         sessionReverseHosts.add(hostname);
       }
+    }
+
+    // ─── iframe Isolation ─────────────────────────────────────────────────────
+
+    function disableIframePointerEvents() {
+      document.querySelectorAll('iframe').forEach(iframe => {
+        iframe.dataset.mgPe = iframe.style.pointerEvents;
+        iframe.style.pointerEvents = 'none';
+      });
+    }
+
+    function restoreIframePointerEvents() {
+      document.querySelectorAll('iframe[data-mg-pe]').forEach(iframe => {
+        iframe.style.pointerEvents = iframe.dataset.mgPe;
+        delete iframe.dataset.mgPe;
+      });
     }
 
     // ─── Geometry ─────────────────────────────────────────────────────────────

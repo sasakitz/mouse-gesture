@@ -51,7 +51,7 @@
 
 ### Chrome Web Store
 
-> 現在 Web Store への申請準備中です。
+[![Chrome Web Store](docs/chrome-webstore-badge.png)](https://chromewebstore.google.com/detail/mouse-gesture/gfccbdmdmlhoddekjcoamknondgeldgc)
 
 ### 手動インストール（デベロッパーモード）
 
