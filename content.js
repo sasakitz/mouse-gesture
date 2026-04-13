@@ -18,6 +18,9 @@ if (window.__mouseGestureLoaded) {
       none:         '(未割当)',
     };
 
+    // Constants
+    const DOUBLE_CLICK_INTERVAL = 400; // ms — threshold for right double-click to show context menu
+
     // State
     let config = null;
     let state = 'IDLE'; // IDLE | RECORDING | EXECUTING
@@ -26,6 +29,8 @@ if (window.__mouseGestureLoaded) {
     let lastDirection = '';
     let gestureDistance = 0;
     let suppressNextContextMenu = false;
+    let allowNextContextMenu = false;
+    let lastRightClickTime = 0;
     let canvas = null;
     let ctx = null;
     let animFrameId = null;
@@ -119,6 +124,24 @@ if (window.__mouseGestureLoaded) {
         if (menuKey !== 'none' && e[menuKey]) return;
       }
 
+      // Detect right double-click: allow context menu (useful on Linux/Mac where
+      // contextmenu fires on mousedown and is suppressed during RECORDING state)
+      const now = Date.now();
+      const timeSinceLast = now - lastRightClickTime;
+      lastRightClickTime = now;
+
+      if (timeSinceLast < DOUBLE_CLICK_INTERVAL && timeSinceLast > 0) {
+        allowNextContextMenu = true;
+        if (state === 'RECORDING') {
+          document.removeEventListener('mousemove', onMouseMove, true);
+          document.removeEventListener('mouseup', onMouseUp, true);
+          removeCanvas();
+          restoreIframePointerEvents();
+          state = 'IDLE';
+        }
+        return;
+      }
+
       // Set RECORDING immediately so contextmenu check works on Linux
       state = 'RECORDING';
       points = [{ x: e.clientX, y: e.clientY }];
@@ -191,6 +214,10 @@ if (window.__mouseGestureLoaded) {
     }
 
     function onContextMenu(e) {
+      if (allowNextContextMenu) {
+        allowNextContextMenu = false;
+        return; // Right double-click: pass through to show native context menu
+      }
       if (state === 'RECORDING') {
         // Always suppress contextmenu during gesture recording.
         // On Linux, contextmenu fires on mousedown; letting it through would open the native menu
