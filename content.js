@@ -9,13 +9,15 @@ if (window.__mouseGestureLoaded) {
     const DIRECTION_THRESHOLD = 15;
     const ARROWS = { L: '←', R: '→', U: '↑', D: '↓' };
     const ACTION_LABELS = {
-      back:         '戻る',
-      forward:      '進む',
-      reload:       'リロード',
-      closeTab:     'タブを閉じる',
-      scrollTop:    '最上部へスクロール',
-      scrollBottom: '最下部へスクロール',
-      none:         '(未割当)',
+      back:            '戻る',
+      forward:         '進む',
+      reload:          'リロード',
+      closeTab:        'タブを閉じる',
+      scrollTop:       '最上部へスクロール',
+      scrollBottom:    '最下部へスクロール',
+      copyLinkText:    'リンクのテキストをコピー',
+      copyLinkURL:     'リンクのURLをコピー',
+      none:            '(未割当)',
     };
 
     // Constants
@@ -31,6 +33,7 @@ if (window.__mouseGestureLoaded) {
     let suppressNextContextMenu = false;
     let allowNextContextMenu = false;
     let lastRightClickTime = 0;
+    let gestureStartElement = null;
     let canvas = null;
     let ctx = null;
     let animFrameId = null;
@@ -149,6 +152,7 @@ if (window.__mouseGestureLoaded) {
       lastDirection = '';
       gestureDistance = 0;
       suppressNextContextMenu = false;
+      gestureStartElement = e.target;
 
       // Disable pointer events on iframes so mousemove events are not swallowed
       // by embedded frames (e.g. embedded X/Twitter posts) during gesture recording
@@ -439,6 +443,14 @@ if (window.__mouseGestureLoaded) {
 
     // ─── Action Execution ─────────────────────────────────────────────────────
 
+    function findAnchorElement(el) {
+      while (el && el !== document.documentElement) {
+        if (el.tagName === 'A' && el.href) return el;
+        el = el.parentElement;
+      }
+      return null;
+    }
+
     async function runGestureAction(action) {
       switch (action) {
         case 'scrollTop':
@@ -447,6 +459,25 @@ if (window.__mouseGestureLoaded) {
         case 'scrollBottom':
           window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
           break;
+        case 'copyLinkText': {
+          const anchor = findAnchorElement(gestureStartElement);
+          if (anchor) {
+            const text = anchor.textContent.trim();
+            await navigator.clipboard.writeText(text).catch(err => {
+              console.warn('[MouseGesture] Failed to copy link text:', err);
+            });
+          }
+          break;
+        }
+        case 'copyLinkURL': {
+          const anchor = findAnchorElement(gestureStartElement);
+          if (anchor) {
+            await navigator.clipboard.writeText(anchor.href).catch(err => {
+              console.warn('[MouseGesture] Failed to copy link URL:', err);
+            });
+          }
+          break;
+        }
         default:
           try {
             await chrome.runtime.sendMessage({ type: 'EXECUTE_ACTION', action });
