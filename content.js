@@ -17,6 +17,7 @@ if (window.__mouseGestureLoaded) {
       scrollBottom:    '最下部へスクロール',
       copyLinkText:    'リンクのテキストをコピー',
       copyLinkURL:     'リンクのURLをコピー',
+      downloadMedia:   'メディアをダウンロード',
       none:            '(未割当)',
     };
 
@@ -451,6 +452,18 @@ if (window.__mouseGestureLoaded) {
       return null;
     }
 
+    function findMediaURL(el) {
+      while (el && el !== document.documentElement) {
+        if (el.tagName === 'IMG' && el.src) return el.src;
+        if (el.tagName === 'VIDEO') {
+          const src = el.currentSrc || el.src || el.querySelector('source')?.src;
+          if (src) return src;
+        }
+        el = el.parentElement;
+      }
+      return null;
+    }
+
     async function runGestureAction(action) {
       switch (action) {
         case 'scrollTop':
@@ -475,6 +488,17 @@ if (window.__mouseGestureLoaded) {
             await navigator.clipboard.writeText(anchor.href).catch(err => {
               console.warn('[MouseGesture] Failed to copy link URL:', err);
             });
+          }
+          break;
+        }
+        case 'downloadMedia': {
+          const mediaURL = findMediaURL(gestureStartElement);
+          if (mediaURL) {
+            try {
+              await chrome.runtime.sendMessage({ type: 'DOWNLOAD_MEDIA', url: mediaURL });
+            } catch (err) {
+              console.warn('[MouseGesture] Failed to download media:', err);
+            }
           }
           break;
         }

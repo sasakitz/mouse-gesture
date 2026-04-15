@@ -5,9 +5,10 @@ const ACTION_OPTIONS = [
   { value: 'closeTab',     label: 'タブを閉じる' },
   { value: 'scrollTop',    label: '最上部へスクロール' },
   { value: 'scrollBottom', label: '最下部へスクロール' },
-  { value: 'copyLinkText', label: 'リンクのテキストをコピー' },
-  { value: 'copyLinkURL',  label: 'リンクのURLをコピー' },
-  { value: 'none',         label: '(未割当)' },
+  { value: 'copyLinkText',  label: 'リンクのテキストをコピー' },
+  { value: 'copyLinkURL',   label: 'リンクのURLをコピー' },
+  { value: 'downloadMedia', label: 'メディアをダウンロード' },
+  { value: 'none',          label: '(未割当)' },
 ];
 
 const ARROWS = { L: '←', R: '→', U: '↑', D: '↓' };
